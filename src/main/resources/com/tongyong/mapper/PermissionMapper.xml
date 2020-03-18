@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tongyong.mapper.PermissionMapper" >
+  <resultMap id="permissionResultMap" type="permission" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="permi_name" property="permiName" jdbcType="VARCHAR" />
+    <result column="permi_type" property="permiType" jdbcType="INTEGER" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="permi_level" property="permiLevel" jdbcType="INTEGER" />
+    <result column="data_status" property="dataStatus" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- 用户菜单，1对多 -->
+  <resultMap type="menuTree" id="userMenuResutMap">
+  	<!-- 父菜单 -->
+   	<id column="menuid" property="menuid"/>
+   	<result column="menuname" property="menuname"/>
+   	<result column="icon" property="icon"/>
+   	<!-- 子菜单 ofType一定要写 -->
+   	<collection property="menus" ofType="menuTree">
+   		<result column="subMenuid" property="menuid"/>
+   		<result column="subMenuname" property="menuname"/>
+   		<result column="subIcon" property="icon"/>
+   		<result column="url" property="url"/>
+   	</collection>
+  </resultMap>
+  
+  <sql id="permission_Column_List" >
+    id, permi_name, permi_type, url, parent_id, sort, permi_level, data_status, create_time,description
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="permissionResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="permission_Column_List" />
+    from sys_permission
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_permission
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="permission" >
+    insert into sys_permission (id, permi_name, permi_type, 
+      url, parent_id, sort, 
+      permi_level, data_status, create_time,description
+      )
+    values (#{id,jdbcType=INTEGER}, #{permiName,jdbcType=VARCHAR}, #{permiType,jdbcType=INTEGER}, 
+      #{url,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, 
+      #{permiLevel,jdbcType=INTEGER}, #{dataStatus,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+      #{description,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="permission" >
+    update sys_permission
+    <set >
+      <if test="permiName != null" >
+        permi_name = #{permiName,jdbcType=VARCHAR},
+      </if>
+      <if test="permiType != null" >
+        permi_type = #{permiType,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="permiLevel != null" >
+        permi_level = #{permiLevel,jdbcType=INTEGER},
+      </if>
+      <if test="dataStatus != null" >
+        data_status = #{dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据父id获取子元素 -->
+  <select id="selectListByParentId" parameterType="int" resultMap="permissionResultMap">
+  	select
+  	<include refid="permission_Column_List" />
+  	from sys_permission
+  	where parent_id = #{parentId} and sys_permission.data_status = 1
+  </select>
+  
+  <select id="selectListByRoleId" parameterType="int" resultMap="permissionResultMap">
+  	select sys_permission.* from sys_role_permission 
+	left join sys_permission
+	on sys_permission.id = sys_role_permission.permission_id
+	where role_id = #{roleId} and sys_permission.data_status = 1
+  </select>
+  
+  <!-- 根据用户id获取用户的所有权限 -->
+  <select id="findPermissionListByUserId" parameterType="int" resultMap="permissionResultMap">
+  	SELECT 
+	<include refid="permission_Column_List" />
+  	from sys_permission where id IN
+	(
+		SELECT permission_id from sys_role_permission where role_id IN
+		(
+				SELECT role_id from sys_user where id=#{userId}
+		)
+	)	
+  </select>
+  
+  <!-- 根据用户id查找用户的菜单 -->
+  <select id="selectMenusByUserId" parameterType="int" resultMap="userMenuResutMap">
+  	SELECT m1.id menuid,m1.permi_name menuname,'icon-sys' icon,m2.id subMenuid,m2.permi_name subMenuname,'icon-log' subIcon,m2.url
+	FROM sys_permission m1,sys_permission m2
+	WHERE m2.parent_id=m1.id AND m2.permi_type=0 AND m1.parent_id=1 AND m1.data_status=1 AND m2.data_status=1
+	AND m2.id IN
+	(
+		SELECT permission_id FROM sys_role_permission WHERE role_id IN
+		(
+			SELECT role_id FROM sys_user WHERE id=#{userId}
+		)
+	)
+	ORDER BY m1.sort,m2.sort
+  </select>
+  
+  <!-- 获取所有的菜单 -->
+  <select id="selectAllMenus" resultMap="userMenuResutMap">
+  	SELECT m1.id menuid,m1.permi_name menuname,'icon-sys' icon,m2.id subMenuid,m2.permi_name subMenuname,'icon-log' subIcon,m2.url
+	FROM sys_permission m1,sys_permission m2
+	WHERE m2.parent_id=m1.id AND m2.permi_type=0 AND m1.parent_id=1 AND m1.data_status=1 AND m2.data_status=1
+	ORDER BY m1.sort,m2.sort
+  </select>
+  
+  <select id="selectAll" resultMap="permissionResultMap">
+  	select * from sys_permission
+  </select>
+</mapper>

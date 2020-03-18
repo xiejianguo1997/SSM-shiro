@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tongyong.mapper.UserMapper" >
+  <resultMap id="userResultMap" type="userCustom" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="dept_id" property="deptId" jdbcType="INTEGER" />
+    <result column="posi_id" property="posiId" jdbcType="INTEGER" />
+    <result column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="branch_school_id" property="branchSchoolId" jdbcType="INTEGER" />
+    <result column="data_status" property="dataStatus" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="posi_name" property="posiName" jdbcType="VARCHAR" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- 表中所有字段 -->
+  <sql id="user_Column_List" >
+    id, username, real_name, password, salt, dept_id, posi_id,role_id,branch_school_id,
+    data_status, create_time
+  </sql>
+  
+  <!-- 查询条件 -->
+  <sql id="query_Clause">
+  	 <where>
+  		<if test="user !=null">
+  			<if test="user.realName !=null and user.realName !=''">
+  				and sys_user.real_name LIKE concat('%', #{user.realName}, '%')
+  			</if>
+  			<if test="user.dataStatus !=null">
+  				and sys_user.data_status =#{user.dataStatus}
+  			</if>
+  			<if test="user.deptId !=null">
+  				and sys_user.dept_id =#{user.deptId}
+  			</if>
+  			<if test="user.roleId !=null">
+                and sys_user.role_id =#{user.roleId}
+            </if>
+  		</if>
+  		<if test="1==1">
+  			and sys_user.id <![CDATA[<>]]>1 
+  		</if>
+  	</where>
+  </sql>
+  
+  <!-- 分页条件 -->
+  <sql id="limit_Clause">
+  	<if test="pageQuery !=null">
+  		limit #{pageQuery.pageStart},#{pageQuery.pageSize}
+  	</if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="userResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="user_Column_List" />
+    from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据角色id和分公司id查询用户 -->
+  <select id="selectByRoleId" resultMap="userResultMap" >
+    select * from sys_user
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="user" >
+    insert into sys_user (id, username, real_name, 
+      password, salt, dept_id, 
+      posi_id,role_id,branch_school_id, data_status, create_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{deptId,jdbcType=INTEGER}, 
+      #{posiId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{branchSchoolId,jdbcType=INTEGER},
+      #{dataStatus,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <update id="update" parameterType="user" >
+    update sys_user
+    <set >
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        real_name = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null" >
+        dept_id = #{deptId,jdbcType=INTEGER},
+      </if>
+      <if test="posiId != null" >
+        posi_id = #{posiId,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null" >
+        role_id = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="branchSchoolId != null" >
+        branch_school_id = #{branchSchoolId,jdbcType=INTEGER},
+      </if>
+      <if test="dataStatus != null" >
+        data_status = #{dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectList" parameterType="userQuery" resultMap="userResultMap">
+  	select sys_user.*,sys_role.role_name,dept.dept_name from sys_user 
+	left JOIN sys_department dept on sys_user.dept_id = dept.id 
+	LEFT JOIN sys_role on sys_user.role_id = sys_role.id
+  	<include refid="query_Clause" />
+  	<include refid="limit_Clause" />
+  </select>
+  
+  <select id="selectListCount" parameterType="userQuery" resultType="int">
+  	select count(*) from sys_user
+  	<include refid="query_Clause" />
+  </select>
+  
+  <!-- 根据用户名查找用户 -->
+  <select id="selectByUsername" resultMap="userResultMap" parameterType="string" >
+   select u.*,(select r.role_name from sys_role r where u.role_id = r.id) role_name
+   from sys_user u where u.username = #{username}
+  </select>
+  
+  <!-- 根据名称查询记录数 -->
+  <select id="selectCountByUsername" parameterType="string" resultType="int">
+  	select count(*) from sys_user
+  	where username = #{username}
+  </select>
+  
+  <update id="userBatchDisable">
+  	update sys_user set data_status = 0 where id in
+  	<foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+  		 #{item}
+  	</foreach>
+  </update>
+  
+  <!-- 修改密码 -->
+  <update id="updatePassword">
+  update sys_user set password = #{md5NewPassword} where id = #{userId}
+  </update>
+  
+  <!-- 测试格式化日期 -->
+  <select id="setlectTempList" parameterType="user" resultMap="userResultMap">
+  	SELECT * from sys_user 
+  	where create_time>=DATE_FORMAT(#{createTime},'%Y-%m-%d')
+  </select>
+</mapper>

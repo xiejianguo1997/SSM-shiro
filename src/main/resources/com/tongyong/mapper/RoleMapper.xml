@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tongyong.mapper.RoleMapper">
+	<resultMap id="roleResultMap" type="role">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="role_name" property="roleName" jdbcType="VARCHAR" />
+		<result column="data_status" property="dataStatus" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<sql id="role_Column_List">
+		id, role_name, data_status, create_time
+	</sql>
+
+	<!-- 查询条件 -->
+	<sql id="query_Clause">
+		<where>
+			<if test="role !=null">
+				<if test="role.roleName !=null and role.roleName !=''">
+					and role_name LIKE concat('%', #{role.roleName}, '%')
+				</if>
+				<if test="role.dataStatus !=null">
+					and data_status =#{role.dataStatus}
+				</if>
+			</if>
+		</where>
+	</sql>
+
+	<!-- 分页条件 -->
+	<sql id="limit_Clause">
+		<if test="pageQuery !=null">
+			limit #{pageQuery.pageStart},#{pageQuery.pageSize}
+		</if>
+	</sql>
+
+	<select id="selectByPrimaryKey" resultMap="roleResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="role_Column_List" />
+		from sys_role
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from sys_role
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="role">
+		insert into sys_role (id, role_name, data_status,
+		create_time)
+		values (#{id,jdbcType=INTEGER}, #{roleName,jdbcType=VARCHAR},
+		#{dataStatus,jdbcType=INTEGER},
+		#{createTime,jdbcType=TIMESTAMP})
+	</insert>
+
+	<update id="update" parameterType="role">
+		update sys_role
+		<set>
+			<if test="roleName != null">
+				role_name = #{roleName,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 查询列表数据 -->
+	<select id="selectList" parameterType="roleQuery" resultMap="roleResultMap">
+		select
+		<include refid="role_Column_List" />
+		from sys_role
+		<include refid="query_Clause" />
+		<include refid="limit_Clause" />
+	</select>
+
+	<!-- 查询记录数 -->
+	<select id="selectListCount" parameterType="roleQuery"
+		resultType="int">
+		select count(*) from sys_role
+		<include refid="query_Clause" />
+	</select>
+
+	<!-- 根据名称查询记录数 -->
+	<select id="selectCountByName" parameterType="string"
+		resultType="int">
+		select count(*) from sys_role
+		where role_name = #{name}
+	</select>
+
+	<update id="roleBatchDisable">
+		update sys_role set data_status = 0 where id in
+		<foreach collection="ids" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
+
+	<!-- 角色设置权限时先删除该角色的所有权限 -->
+	<delete id="deleteBatchByRoleId" parameterType="int">
+		DELETE from sys_role_permission WHERE role_id=#{roleId}
+	</delete>
+
+	<!-- 批量插入角色权限关系表数据 -->
+	<insert id="insertBatch" parameterType="java.util.List">
+		INSERT INTO sys_role_permission(role_id,permission_id) VALUES
+		<foreach collection="list" item="item" separator=",">
+			(#{item.roleId},#{item.permissionId})
+		</foreach>
+	</insert>
+</mapper>

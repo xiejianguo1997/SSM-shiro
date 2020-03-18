@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd 
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-3.1.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-3.1.xsd ">
+
+	<!--读取jdbc配置文件-->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<!-- jdbc配置 -->
+				<value>classpath:db.properties</value>
+				<!-- memcached配置 -->
+			</list>
+		</property>
+	</bean>
+	
+	<!--数据库连接池： c3p0，断开后自动重连，可以连接多个数据库-->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driver}"/>
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}"/>
+		<!--连接池中保留的最小连接数。-->            
+	    <property name="minPoolSize" value="10" />        
+	    <!--连接池中保留的最大连接数。Default: 15 -->         
+	    <property name="maxPoolSize" value="100" />        
+	    <!--最大空闲时间,1800秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->               
+	    <property name="maxIdleTime" value="1800" />        
+	    <!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->               
+	    <property name="acquireIncrement" value="3" />        
+	    <property name="maxStatements" value="1000" />         
+	    <property name="initialPoolSize" value="10" />          
+	    <!--每60秒检查所有连接池中的空闲连接。Default: 0 -->       
+	    <property name="idleConnectionTestPeriod" value="60" />          
+	    <!--定义在从数据库获取新连接失败后重复尝试的次数。Default: 30 -->       
+	    <property name="acquireRetryAttempts" value="30" />         
+	    <property name="breakAfterAcquireFailure" value="true" />             
+	    <property name="testConnectionOnCheckout" value="false" />
+	</bean>
+	
+	
+	<!-- 事务管理器，mybatis使用jdbc事务管理-->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!-- 数据源 -->
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- 开启事务注解 -->
+	<!-- <tx:annotation-driven transaction-manager="transactionManager"/> -->
+	
+	<!-- 配置方式事务，个人认为配置方式比注解好，规范代码 -->
+	<!-- 通知 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<!-- 配置传播行为 -->
+		<tx:attributes>
+			<!-- 默认回滚runtime异常，自定义异常后，这里rollback-for需要写成自己定义的异常，或者是Exception -->
+			<tx:method name="requires_new_*" propagation="REQUIRES_NEW" rollback-for="java.lang.Exception"/>
+			<tx:method name="save*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+			<tx:method name="insert*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+			<tx:method name="update*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+			<tx:method name="delete*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+			<tx:method name="set*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+			<tx:method name="find*" propagation="SUPPORTS" read-only="true"/>
+			<tx:method name="get*" propagation="SUPPORTS" read-only="true"/>
+			<tx:method name="select*" propagation="SUPPORTS" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- aop配置 -->
+	<aop:config>
+		<aop:advisor advice-ref="txAdvice"
+		 pointcut="execution(* com.tongyong.serviceimp.*.*(..))"/>
+	</aop:config>
+	
+</beans>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="schedule-console" version="3.0">
+
+    <display-name>tongyong</display-name>
+
+	<session-config>
+		<session-timeout>240</session-timeout>
+	</session-config>
+
+	<!-- 加载spring容器 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<!-- 这里用classpath来指定路径，如果写绝对路径会出现xml中引入其他xml时报错 -->
+		<param-value>classpath*:spring/applicationContext*.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- post乱码处理 -->
+	<filter>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!--springmvc的 前端控制器 -->
+	<servlet>
+		<servlet-name>springmvc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- contextConfigLocation指定 springmvc的全局配置文件 如果 contextConfigLocation不指定，默认找配置文件名称：servlet的name+"-servlet.xml" -->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath*:spring/springmvc.xml</param-value>
+		</init-param>
+		<!-- 屏蔽springmvc自动注册的异常处理器 ，使用我们自定义的异常处理器 -->
+		<!-- <init-param> <param-name>detectAllHandlerExceptionResolvers</param-name> 
+			<param-value>false</param-value> </init-param> -->
+		<!-- web应用启动时加载这个servlet，这么配置以后，初始化数据字典打了标签才能执行 -->
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>springmvc</servlet-name>
+		<url-pattern>*.action</url-pattern>
+	</servlet-mapping>
+	<!-- 这个配置给开发前台用的，给前台一个index一个的action，这样可以加载数据 -->
+	<!-- <servlet-mapping> <servlet-name>springmvc</servlet-name> <url-pattern>/index</url-pattern> 
+		</servlet-mapping> -->
+
+	<welcome-file-list>
+		<!-- 对应于上面的/index -->
+		<!-- <welcome-file>index</welcome-file> -->
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+
+</web-app>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tongyong.mapper.DepartmentMapper">
+	<resultMap id="departmentResultMap" type="departmentCustom">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+		<result column="dept_code" property="deptCode" jdbcType="VARCHAR" />
+		<result column="short_name" property="shortName" jdbcType="VARCHAR" />
+		<result column="data_status" property="dataStatus" jdbcType="INTEGER" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+		<result column="create_user_ip" property="createUserIp" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="principal_id" property="principalId" jdbcType="INTEGER" />
+		<result column="principal_name" property="principalName" jdbcType="VARCHAR" />
+		<result column="children_count" property="childrenCount" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="department_Column_List">
+		id, dept_name, parent_id, dept_code, short_name, data_status, sort, remark, create_user_id, 
+    create_user_ip, create_time, principal_id, principal_name
+	</sql>
+
+	<select id="selectByPrimaryKey" resultMap="departmentResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="department_Column_List" />
+		from sys_department
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		sys_department
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="department">
+		insert into sys_department (id, dept_name, parent_id, 
+      dept_code, short_name, data_status, 
+      sort, remark, create_user_id, 
+      create_user_ip, create_time, principal_id, principal_name
+      )
+    values (#{id,jdbcType=INTEGER}, #{deptName,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, 
+      #{deptCode,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, #{dataStatus,jdbcType=INTEGER}, 
+      #{sort,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createUserId,jdbcType=INTEGER}, 
+      #{createUserIp,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{principalId,jdbcType=INTEGER},
+      #{principalName,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="update" parameterType="department">
+		update sys_department
+		<set>
+			<if test="deptName != null">
+				dept_name = #{deptName,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="deptCode != null">
+				dept_code = #{deptCode,jdbcType=VARCHAR},
+			</if>
+			<if test="shortName != null">
+				short_name = #{shortName,jdbcType=VARCHAR},
+			</if>
+			<if test="dataStatus != null">
+				data_status = #{dataStatus,jdbcType=INTEGER},
+			</if>
+			<if test="sort != null">
+				sort = #{sort,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createUserId != null">
+				create_user_id = #{createUserId,jdbcType=INTEGER},
+			</if>
+			<if test="createUserIp != null">
+				create_user_ip = #{createUserIp,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="principalId != null" >
+		        principal_id = #{principalId,jdbcType=INTEGER},
+		    </if>
+		    <if test="principalName != null" >
+		        principal_name = #{principalName,jdbcType=VARCHAR},
+		    </if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<update id="updateByPrimaryKey" parameterType="department">
+		update sys_department
+	    set dept_name = #{deptName,jdbcType=VARCHAR},
+	      parent_id = #{parentId,jdbcType=INTEGER},
+	      dept_code = #{deptCode,jdbcType=VARCHAR},
+	      short_name = #{shortName,jdbcType=VARCHAR},
+	      data_status = #{dataStatus,jdbcType=INTEGER},
+	      sort = #{sort,jdbcType=INTEGER},
+	      remark = #{remark,jdbcType=VARCHAR},
+	      create_user_id = #{createUserId,jdbcType=INTEGER},
+	      create_user_ip = #{createUserIp,jdbcType=VARCHAR},
+	      create_time = #{createTime,jdbcType=TIMESTAMP},
+	      principal_id = #{principalId,jdbcType=INTEGER},
+	      principal_name = #{principalName,jdbcType=VARCHAR}
+	    where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 批量删除 -->
+	<delete id="deleteList">
+		delete from sys_department where id in
+		<foreach collection="array" open="(" close=")" item="pk"
+			separator=",">
+			#{pk}
+		</foreach>
+	</delete>
+
+	<!-- 查询的sql片段，这里可以多写一些提交，提供程序的扩展性 -->
+	<sql id="query_Clause">
+		<where>
+			<if test="department !=null">
+				<if test="department.name !=null and department.name !=''">
+					and name LIKE '%${department.name}%'
+				</if>
+			</if>
+		</where>
+	</sql>
+	
+  <!-- 分页条件 -->
+  <sql id="limit_Clause">
+  	<if test="pageQuery !=null">
+  		limit #{pageQuery.pageStart},#{pageQuery.pageSize}
+  	</if>
+  </sql>
+
+	<!-- 使用了查询片段，输入和输出参数使用包装类 -->
+	<select id="selectList" parameterType="departmentQuery"  resultMap="departmentResultMap">
+		select * from sys_department
+		<include refid="query_Clause" />
+  		<include refid="limit_Clause" />
+	</select>
+
+	<!-- 获取记录数 -->
+	<select id="selectListCount" parameterType="departmentQuery" resultType="int">
+		select count(*) from sys_department 
+		<include refid="query_Clause" />
+	</select>
+
+	<select id="findListByPid" parameterType="int" resultMap="departmentResultMap">
+		select d.*,
+		(select count(dc.id) from sys_department dc where dc.parent_id = d.id) children_count
+		from sys_department d
+		where d.parent_id = #{pid}
+		and d.data_status = 1
+	</select>
+
+	<!-- 根据父节点id获取子节点的个数 -->
+	<select id="selectChildrenCount" parameterType="int" resultType="int">
+		SELECT COUNT(*) FROM sys_department where parent_id=#{pid}
+		and data_status =1
+	</select>
+</mapper>
