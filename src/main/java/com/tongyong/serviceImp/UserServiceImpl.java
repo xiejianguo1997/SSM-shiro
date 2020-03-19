@@ -48,7 +48,7 @@ public class UserServiceImpl implements IUserService {
 			ResultUtil.throwCustomExcepion(101);
 		}
 		String salt = Util.randomNubmer4();
-		entity.setPassword(Md5Util.md5Hex(entity.getPassword() + salt));
+		entity.setPassword(new MD5().md5(entity.getPassword() , salt));
 		entity.setSalt(salt);
 		entity.setCreateTime(new Date());
 		entity.setDataStatus(MyConfig.DATA_STATUS_YES);
@@ -153,7 +153,8 @@ public class UserServiceImpl implements IUserService {
 		// 根据用户id查询菜单
 		List<MenuTree> menus = null;
 		try {
-			menus = permissionService.selectAllMenus();
+			//menus = permissionService.selectAllMenus();
+			menus = permissionService.selectMenusByUserId(userid);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -177,7 +178,9 @@ public class UserServiceImpl implements IUserService {
 		// 放入权限范围的菜单和url
 		activeUser.setMenus(menus);
 		//activeUser.setPermissions(permissions);
+		System.out.println("123456");
 		System.out.println(menus.toString());
+		System.out.println(activeUser.getMenus().toString());
 		//System.out.println(permissions.toString());
 		return activeUser;
 	}

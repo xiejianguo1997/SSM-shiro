@@ -111,7 +111,7 @@ public class LoginController {
 			//loginUser=(LoginUser) session.getAttribute(MyConfig.LOGINUSER_KEY);
 			model.addAttribute("welcomeUrl", url);
 			System.out.println("asdfsadfasdf");
-			//System.out.println(loginUser.getMenus().toString());
+			System.out.println(loginUser.getMenus());
 			model.addAttribute("loginUser", loginUser);
 			
 			// 去主界面，拦截器中控制，如果没有登录，是访问不了它

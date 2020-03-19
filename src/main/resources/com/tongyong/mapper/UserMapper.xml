@@ -10,7 +10,6 @@
     <result column="dept_id" property="deptId" jdbcType="INTEGER" />
     <result column="posi_id" property="posiId" jdbcType="INTEGER" />
     <result column="role_id" property="roleId" jdbcType="INTEGER" />
-    <result column="branch_school_id" property="branchSchoolId" jdbcType="INTEGER" />
     <result column="data_status" property="dataStatus" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
@@ -20,7 +19,7 @@
   
   <!-- 表中所有字段 -->
   <sql id="user_Column_List" >
-    id, username, real_name, password, salt, dept_id, posi_id,role_id,branch_school_id,
+    id, username, real_name, password, salt, dept_id, posi_id,role_id,
     data_status, create_time
   </sql>
   
@@ -75,11 +74,11 @@
   <insert id="insert" parameterType="user" >
     insert into sys_user (id, username, real_name, 
       password, salt, dept_id, 
-      posi_id,role_id,branch_school_id, data_status, create_time
+      posi_id,role_id, data_status, create_time
       )
     values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, 
       #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{deptId,jdbcType=INTEGER}, 
-      #{posiId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{branchSchoolId,jdbcType=INTEGER},
+      #{posiId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER},
       #{dataStatus,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -107,9 +106,6 @@
       </if>
       <if test="roleId != null" >
         role_id = #{roleId,jdbcType=INTEGER},
-      </if>
-      <if test="branchSchoolId != null" >
-        branch_school_id = #{branchSchoolId,jdbcType=INTEGER},
       </if>
       <if test="dataStatus != null" >
         data_status = #{dataStatus,jdbcType=INTEGER},

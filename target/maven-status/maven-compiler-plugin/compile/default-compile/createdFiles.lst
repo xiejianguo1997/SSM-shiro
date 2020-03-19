@@ -23,6 +23,7 @@ com\tongyong\util\Util.class
 com\tongyong\mapper\DepartmentMapper.class
 com\tongyong\controller\LoginController.class
 com\tongyong\util\Md5Util.class
+com\tongyong\controller\UserController.class
 com\tongyong\pojo\entity\addition\LoginUser.class
 com\tongyong\controller\testController.class
 com\tongyong\serviceImp\DepartmentServiceImpl.class

@@ -17,6 +17,7 @@ M:\eclipse1\workspace\tongyong\src\main\java\com\tongyong\pojo\entity\addition\D
 M:\eclipse1\workspace\tongyong\src\main\java\com\tongyong\serviceImp\UserServiceImpl.java
 M:\eclipse1\workspace\tongyong\src\main\java\com\tongyong\service\IPermissionService.java
 M:\eclipse1\workspace\tongyong\src\main\java\com\tongyong\controller\AccountController.java
+M:\eclipse1\workspace\tongyong\src\main\java\com\tongyong\controller\UserController.java
 M:\eclipse1\workspace\tongyong\src\main\java\com\tongyong\interceptor\PermissionInterceptor.java
 M:\eclipse1\workspace\tongyong\src\main\java\com\tongyong\mapper\DepartmentMapper.java
 M:\eclipse1\workspace\tongyong\src\main\java\com\tongyong\serviceImp\PermissionServiceImpl.java
