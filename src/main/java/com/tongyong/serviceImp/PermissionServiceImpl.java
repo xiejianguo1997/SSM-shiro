@@ -147,4 +147,9 @@ public class PermissionServiceImpl implements IPermissionService {
 		return permissionMapper.selectAllMenus();
 	}
 
+	@Override
+	public List<Permission> selectMenusByUserIdshiro(int userId) {
+		return permissionMapper.selectMenusByUserIdshiro( userId);
+	}
+
 }

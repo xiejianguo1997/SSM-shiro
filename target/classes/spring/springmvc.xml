@@ -49,18 +49,19 @@
             </list>    
         </property>    
     </bean>
-	<!-- 拦截器，登录和权限就靠它 -->
-	<mvc:interceptors>
+    
+	<!-- 拦截器，登录和权限就靠它 没用shiro的时候
+	<mvc:interceptors>-->
 		<!-- 多个拦截器,顺序执行从上到下 -->
-		<!-- 用户身份校验的拦截器 -->
+		<!-- 用户身份校验的拦截器
 		<mvc:interceptor>
 			<mvc:mapping path="/**"/>
 			<bean class="com.tongyong.interceptor.LoginInterceptor" />
-		</mvc:interceptor>
-		<!-- 用户权限拦截器 -->
+		</mvc:interceptor> -->
+		<!-- 用户权限拦截器 
 		<mvc:interceptor>
 			<mvc:mapping path="/**"/>
 			<bean class="com.tongyong.interceptor.PermissionInterceptor"></bean>
 		</mvc:interceptor>
-	</mvc:interceptors>
+	</mvc:interceptors>-->
 </beans>

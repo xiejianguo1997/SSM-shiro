@@ -62,4 +62,6 @@ public interface PermissionMapper extends BaseMapper<Permission, Permission, Per
 	public List<MenuTree> selectAllMenus()throws Exception;
 
 	public List<Permission> selectAll();
+
+	public List<Permission> selectMenusByUserIdshiro(int userId);
 }

@@ -17,7 +17,6 @@
   </style>
 </head>
 <body>
-
 <div id="particles-js">
 		<div class="login">
 			<form action="${projectPath }/login.action" method="post">
@@ -38,6 +37,17 @@
 					<div class="login-center-input-text">密 码</div>
 				</div>
 			</div>
+			<TR>
+							<TD>验证码：</TD>
+							<TD><input id="randomcode" name="randomcode" size="8" /> <img
+								id="randomcode_img" src="${projectPath }/validatecode.action" alt="验证码"
+								width="56" height="20" align='absMiddle' /> <a id ="aid"
+								href="">刷新</a></TD>
+						</TR>
+						<tr>
+							<TD></TD>
+							<td><input type="checkbox" name="rememberMe" />自动登陆</td>
+						</tr>
 			<div class="login-center">
 			<div class="errorTips" >${msg }</div>
 			</div>
@@ -52,7 +62,15 @@
 <!-- scripts -->
 <script src="${projectPath }/js/particles.min.js"></script>
 <script src="${projectPath }/js/app.js"></script>
+<script src="${projectPath }/js/jquery.min.js"></script>
 <script type="text/javascript">
+
+$(document).ready(function(){
+	  $("#aid").click(function(){
+	  htmlobj=$.ajax({url:"${projectPath }/validatecode.action",async:false});
+	  $("#randomcode_img").html(htmlobj);
+	  });
+	});
 	function hasClass(elem, cls) {
 	  cls = cls || '';
 	  if (cls.replace(/\s/g, '').length == 0) return false; //å½clsæ²¡æåæ°æ¶ï¼è¿åfalse
@@ -88,6 +106,8 @@
 					
 				},5000)
 		}
+		
+		
 </script>
 <div style="text-align:center;">
 

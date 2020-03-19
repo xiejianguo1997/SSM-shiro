@@ -26,7 +26,8 @@ public class LoginUser implements Serializable {
     private Integer posiId;//岗位id
     private Integer roleId;//角色id
     private String roleName;//角色名称
-    private Integer branchSchoolId;//驾校id
+    private String Password;//角色名称
+    
     public Integer getRoleId() {
 		return roleId;
 	}
@@ -102,11 +103,12 @@ public class LoginUser implements Serializable {
 		this.roleName = roleName;
 	}
 
-	public Integer getBranchSchoolId() {
-		return branchSchoolId;
+	public String getPassword() {
+		return Password;
 	}
 
-	public void setBranchSchoolId(Integer branchSchoolId) {
-		this.branchSchoolId = branchSchoolId;
+	public void setPassword(String password) {
+		Password = password;
 	}
+
 }

@@ -66,4 +66,6 @@ public interface IPermissionService extends IBaseService<Permission, Permission,
 	 * @throws Exception
 	 */
 	public List<MenuTree> selectAllMenus()throws Exception;
+
+	public List<Permission> selectMenusByUserIdshiro(int userId);
 }

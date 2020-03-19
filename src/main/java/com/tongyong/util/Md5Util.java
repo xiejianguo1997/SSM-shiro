@@ -33,7 +33,7 @@ public class Md5Util {
     }
 	
 	public static void main(String[] args) {
-		System.err.println(md5Hex("123456"));
+		System.err.println(md5Hex("1237990"));
 		System.err.println(md5HexUpperCase("123456"));
 		System.err.println(md5Hex("111111"));
 	}

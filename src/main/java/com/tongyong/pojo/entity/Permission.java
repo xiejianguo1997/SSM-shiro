@@ -33,6 +33,7 @@ public class Permission {
     private Date createTime;
     
     private String description;
+    private String percode;
     
     public Integer getId() {
         return id;
@@ -113,4 +114,21 @@ public class Permission {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public String getPercode() {
+		return percode;
+	}
+
+	public void setPercode(String percode) {
+		this.percode = percode;
+	}
+
+	@Override
+	public String toString() {
+		return "Permission [id=" + id + ", permiName=" + permiName + ", permiType=" + permiType + ", url=" + url
+				+ ", parentId=" + parentId + ", sort=" + sort + ", permiLevel=" + permiLevel + ", dataStatus="
+				+ dataStatus + ", createTime=" + createTime + ", description=" + description + ", percode=" + percode
+				+ "]";
+	}
+	
 }

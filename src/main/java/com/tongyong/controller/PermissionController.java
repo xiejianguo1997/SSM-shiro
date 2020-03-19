@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,12 +33,14 @@ public class PermissionController {
 	private IPermissionService permissionService;
 	
 	// 列表页面
+	@RequiresPermissions("perimission:query")
 	@RequestMapping("/permissionList")
 	public String permissionList() {
 		return "permission/permissionList";
 	}
 
 	// 列表数据- 根据父id获取菜单和权限
+	@RequiresPermissions("perimission:query")
 	@RequestMapping("/getMenuPermission")
 	@ResponseBody
 	public Object getMenuPermission(String parentId) throws Exception {
@@ -56,6 +59,7 @@ public class PermissionController {
 	}
 	
 	//列表页面的数据
+	@RequiresPermissions("perimission:query")
 	@RequestMapping("/permissionTreeJson")
 	@ResponseBody
 	public Object permissionTreeJson(String id) throws Exception {
@@ -80,6 +84,7 @@ public class PermissionController {
 	}
 
 	// 新增页面
+	@RequiresPermissions("perimission:add")
 	@RequestMapping(value = "/permissionAdd", method = RequestMethod.GET)
 	public String add(String pid, Model model) throws Exception {
 		if (StringUtils.isBlank(pid)) {
@@ -94,6 +99,7 @@ public class PermissionController {
 	}
 
 	// 新增提交
+	@RequiresPermissions("perimission:add")
 	@RequestMapping(value = "/permissionAdd", method = RequestMethod.POST)
 	@ResponseBody
 	public Object permissionAdd(Permission permission) throws Exception {
@@ -104,6 +110,7 @@ public class PermissionController {
 	}
 
 	// 修改页面
+	@RequiresPermissions("perimission:update")
 	@RequestMapping(value = "/permissionEdit", method = RequestMethod.GET)
 	public String permissionEdit(Integer id, Model model) throws Exception {
 
@@ -114,6 +121,7 @@ public class PermissionController {
 	}
 
 	// 修改提交
+	@RequiresPermissions("perimission:update")
 	@RequestMapping(value = "/permissionEdit", method = RequestMethod.POST)
 	@ResponseBody
 	public Object permissionEdit(Permission permission) throws Exception {
@@ -124,6 +132,7 @@ public class PermissionController {
 	}
 
 	// 删除
+	@RequiresPermissions("perimission:delete")
 	@RequestMapping("/deleteList")
 	@ResponseBody
 	public SubmitResultInfo deleteList(String[] ids) throws Exception {

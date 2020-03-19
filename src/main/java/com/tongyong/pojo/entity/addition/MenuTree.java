@@ -73,4 +73,11 @@ public class MenuTree {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+
+	@Override
+	public String toString() {
+		return "MenuTree [menus=" + menus + ", menuid=" + menuid + ", icon=" + icon + ", menuname=" + menuname
+				+ ", url=" + url + "]";
+	}
+	
 }

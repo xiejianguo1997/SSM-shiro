@@ -12,6 +12,7 @@
     <result column="data_status" property="dataStatus" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="percode" property="percode" jdbcType="VARCHAR" />
   </resultMap>
   
   <!-- 用户菜单，1对多 -->
@@ -30,7 +31,7 @@
   </resultMap>
   
   <sql id="permission_Column_List" >
-    id, permi_name, permi_type, url, parent_id, sort, permi_level, data_status, create_time,description
+    id, permi_name, permi_type, url, parent_id, sort, permi_level, data_status, create_time,description,percode
   </sql>
   
   <select id="selectByPrimaryKey" resultMap="permissionResultMap" parameterType="java.lang.Integer" >
@@ -48,12 +49,12 @@
   <insert id="insert" parameterType="permission" >
     insert into sys_permission (id, permi_name, permi_type, 
       url, parent_id, sort, 
-      permi_level, data_status, create_time,description
+      permi_level, data_status, create_time,description,percode
       )
     values (#{id,jdbcType=INTEGER}, #{permiName,jdbcType=VARCHAR}, #{permiType,jdbcType=INTEGER}, 
       #{url,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, 
       #{permiLevel,jdbcType=INTEGER}, #{dataStatus,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
-      #{description,jdbcType=VARCHAR})
+      #{description,jdbcType=VARCHAR},#{percode,jdbcType=VARCHAR})
   </insert>
   
   <update id="update" parameterType="permission" >
@@ -86,6 +87,9 @@
       <if test="description != null" >
         description = #{description,jdbcType=VARCHAR},
       </if>
+      <if test="percode != null" >
+        percode = #{percode,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -104,7 +108,18 @@
 	on sys_permission.id = sys_role_permission.permission_id
 	where role_id = #{roleId} and sys_permission.data_status = 1
   </select>
-  
+  <!-- 根据用户id获取用户的所有权限shiro -->
+  <select id="selectMenusByUserIdshiro" parameterType="int" resultMap="permissionResultMap">
+  	SELECT 
+	<include refid="permission_Column_List" />
+  	from sys_permission where id IN
+	(
+		SELECT permission_id from sys_role_permission where role_id IN
+		(
+				SELECT role_id from sys_user where id=#{userId}
+		)
+	)	
+  </select>
   <!-- 根据用户id获取用户的所有权限 -->
   <select id="findPermissionListByUserId" parameterType="int" resultMap="permissionResultMap">
   	SELECT 

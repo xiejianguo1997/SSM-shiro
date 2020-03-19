@@ -1,5 +1,6 @@
 package com.tongyong.service;
 
+import com.tongyong.pojo.entity.addition.LoginUser;
 import com.tongyong.pojo.entity.addition.UserCustom;
 import com.tongyong.pojo.entity.addition.UserQuery;
 import com.tongyong.pojo.entity.User;
@@ -47,4 +48,6 @@ public interface IUserService extends IBaseService<User, UserQuery, UserCustom>{
 	 * @param md5NewPassword
 	 */
 	void updatePassword(Integer userId,String md5NewPassword);
+
+	LoginUser authenticat(String usercode, String password);
 }

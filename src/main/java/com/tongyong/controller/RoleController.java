@@ -2,6 +2,7 @@ package com.tongyong.controller;
 
 import java.util.List;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +42,7 @@ public class RoleController {
 	}
 
 	// 列表数据
+	@RequiresPermissions("role:query")
 	@RequestMapping("/roleListData")
 	@ResponseBody
 	public Object roleListData(RoleQuery roleQuery, int pageNumber, int pageSize) throws Exception {
@@ -58,12 +60,14 @@ public class RoleController {
 	}
 
 	// 新增页面
+	@RequiresPermissions("role:add")
 	@RequestMapping(value = "/roleAdd", method = RequestMethod.GET)
 	public String roleAdd(Model model) throws Exception {
 		return "role/roleAdd";
 	}
 
 	// 新增提交
+	@RequiresPermissions("role:add")
 	@RequestMapping(value = "/roleAdd", method = RequestMethod.POST)
 	@ResponseBody
 	public SubmitResultInfo roleAdd(Role role) throws Exception {
@@ -72,6 +76,7 @@ public class RoleController {
 	}
 
 	// 修改页面
+	@RequiresPermissions("role:edit")
 	@RequestMapping(value = "/roleEdit", method = RequestMethod.GET)
 	public String roleEdit(Integer id, Model model) throws Exception {
 		// 根据id查询查实体
@@ -82,6 +87,7 @@ public class RoleController {
 	}
 
 	// 修改提交
+	@RequiresPermissions("role:edit")
 	@RequestMapping(value = "/roleEdit", method = RequestMethod.POST)
 	@ResponseBody
 	public SubmitResultInfo roleEdit(Role role) throws Exception {
@@ -92,6 +98,7 @@ public class RoleController {
 	}
 
 	// 批量删除
+	@RequiresPermissions("role:delete")
 	@RequestMapping(value = "/roleBatchDisable", method = RequestMethod.POST)
 	@ResponseBody
 	public SubmitResultInfo roleBatchDisable(int[] ids) throws Exception {
@@ -100,6 +107,7 @@ public class RoleController {
 	}
 
 	// 为角色设置权限-页面
+	@RequiresPermissions("perimission:update")
 	@RequestMapping(value = "/setPerimission", method = RequestMethod.GET)
 	public String setPerimission(Integer roleId, Model model) throws Exception {
 		model.addAttribute("roleId", roleId);// 角色id
@@ -109,6 +117,7 @@ public class RoleController {
 	}
 
 	// 为角色设置权限-动作
+	@RequiresPermissions("perimission:update")
 	@RequestMapping(value = "/setPerimission", method = RequestMethod.POST)
 	@ResponseBody
 	public Object setPerimission(Integer roleId, String menuIds) throws Exception {

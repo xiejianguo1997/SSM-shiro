@@ -37,13 +37,13 @@ public class AccountController {
 	//@Autowired
 	//private ILoginLogService loginLogService;
 	
-	@RequestMapping(value="/login",method=RequestMethod.GET)
+	@RequestMapping(value="/login3",method=RequestMethod.GET)
 	public String login(Model model){
 		return "login";
 	}
 	
 	//登录提交
-	@RequestMapping(value="/login",method=RequestMethod.POST)
+	@RequestMapping(value="/login3",method=RequestMethod.POST)
 	public String login(String username,String password,String captcha,Model model,
 			HttpServletRequest request,HttpSession session)throws Exception{
 		//登录日志
@@ -92,7 +92,6 @@ public class AccountController {
 				loginUser.setDeptId(userCustom.getDeptId());
 				loginUser.setPosiId(userCustom.getPosiId());
 				loginUser.setRoleId(userCustom.getRoleId());
-				loginUser.setBranchSchoolId(userCustom.getBranchSchoolId());
 				loginUser.setRoleName(userCustom.getRoleName());
 				//用户菜单
 				loginUser.setMenus(permissionService.selectMenusByUserId(userCustom.getId()));
@@ -115,7 +114,7 @@ public class AccountController {
 	}
 	
 	//主界面
-	@RequestMapping("/index")
+	@RequestMapping("/index3")
 	public String index(Model model,HttpSession session) {
 		//登录后的默认欢迎页面
 		String url="/welcome.action";
@@ -130,13 +129,13 @@ public class AccountController {
 	}
 	
 	//欢迎界面
-	@RequestMapping("/welcome")
+	@RequestMapping("/welcome3")
 	public String welcome(){
 		return "welcome";
 	}
 	
 	//直接退出的页面
-	@RequestMapping("/logout")
+	@RequestMapping("/logout3")
 	public String logout(HttpSession session)throws Exception{
 		session.invalidate();//session失效
 		return "redirect:/login.action";
